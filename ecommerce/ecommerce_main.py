@@ -10,6 +10,8 @@ from ecommerce.payment_data import PaymentDataGenerator
 from ecommerce.product_view_data import ProductViewDataGenerator
 from ecommerce.return_data import ReturnDataGenerator
 from ecommerce.shipment_data import ShipmentDataGenerator
+import os
+import glob
 
 def main():
     num_of_records = 100000  # Specify the number of records you want to generate
@@ -22,14 +24,14 @@ def main():
     product_generator = ProductDataGenerator()
     product_generator.generate_product(num_of_records)
 
+    # Generate and upload device data
+    device_generator = DeviceDataGenerator()
+    device_generator.generate_device(num_of_records)
+
 
     # Generate and upload customer data
     customer_generator = CustomerDataGenerator()
     customer_generator.generate_customer(num_of_records)
-
-    # Generate and upload device data
-    device_generator = DeviceDataGenerator()
-    device_generator.generate_device(num_of_records)
 
     # Generate and upload payment data
     payment_generator = PaymentDataGenerator()
@@ -62,6 +64,12 @@ def main():
     # Generate and upload cancelation data
     cancelation_generator = CancelationDataGenerator()
     cancelation_generator.generate_cancelation(1000)
+
+
+    # Removing temp file
+
+    for file in glob.glob(pathname=r"d:\Synthetic_Data\tmp\*.csv"):
+        os.remove(file)
 
 if __name__ == "__main__":
     main()

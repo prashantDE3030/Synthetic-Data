@@ -7,7 +7,8 @@ from uuid import uuid4
 import csv
 from google.cloud import storage
 import io
-from ecommerce.logger import logger
+from ride_sharing.logger import logger
+from ride_sharing.gcs_to_local_download import DownloadFile
 fake = Faker("en_IN")
 
 @dataclass
@@ -19,12 +20,10 @@ class Device:
     ip_address: str
     last_login: datetime
 
-
-
 class DeviceDataGenerator:
     """ Class to generate device data and upload to GCS  """
 
-    def __init__(self, bucket_name: str = "gcs-ecommerce-data"):
+    def __init__(self, bucket_name: str = "gcs-ride-sharing-data"):
         self.bucket_name = bucket_name
         self.storage_client = storage.Client()
     
@@ -46,20 +45,17 @@ class DeviceDataGenerator:
         """ Generate device data bases on the number of records """
         date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Starting device data generation...{date}")
-        device_types = ["Mobile", "Tablet", "Desktop", "Laptop"]
-        operating_systems = ["iOS", "Android", "Windows", "macOS", "Linux"]
-        browsers = ["Chrome", "Firefox", "Safari", "Edge", "Opera"]
-
-
+        device_types = ["Mobile", "Tablet"]
+        operating_systems = ["iOS", "Android"]
         devices = []
         for _ in range(num_of_records):
-            id = "DEV-" + str(uuid4())[:8]
+            device_id = "DEV-" + str(uuid4())[:8]
             device_type = random.choice(device_types)
             os = random.choice(operating_systems)
-            application = "Mobile Application" if device_type=="Mobile" else random.choice(browsers)
+            application = "Mobile Application"
             ip_address = fake.ipv4_public()
             last_login = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            devices.append(Device(device_id=id, device_type=device_type, os=os, application=application, ip_address=ip_address, last_login=last_login))
+            devices.append(Device(device_id=device_id, device_type=device_type, os=os, application=application, ip_address=ip_address, last_login=last_login))
         
         rows=[]
         for row in devices:

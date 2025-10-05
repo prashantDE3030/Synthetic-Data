@@ -40,6 +40,7 @@ class Customer:
     email: str
     gender: str
     address: str
+    device_id: str
     phone: str
     city: str
     country: str
